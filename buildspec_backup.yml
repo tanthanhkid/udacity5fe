@@ -5,16 +5,16 @@ env:
     AWS_REGION: "us-east-1"
     ECR_REPOSITORY_URI: "593331310640.dkr.ecr.us-east-1.amazonaws.com/frontend"
     REACT_APP_MOVIE_API_URL: "http://localhost:5000" # Set this to the correct backend URL
-
+    AWS_CLUSTER_NAME: "cluster"
+    
 phases:
   install:
     commands:
-      - echo Installing dependencies... 
-      - echo Installing kubectl...
+      - echo Installing dependencies...  
+      - echo "Installing kubectl"
       - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-      - kubectl version --client
-      - aws eks update-kubeconfig --name cluster
+      - aws eks --region $AWS_REGION update-kubeconfig --name $AWS_CLUSTER_NAME
       - kubectl apply -f k8s/deployment.yaml --validate=false
 
   pre_build:
