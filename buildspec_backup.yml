@@ -1,0 +1,51 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: "us-east-1"
+    ECR_REPOSITORY_URI: "593331310640.dkr.ecr.us-east-1.amazonaws.com/frontend"
+    REACT_APP_MOVIE_API_URL: "http://localhost:5000" # Set this to the correct backend URL
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies... 
+      - echo Installing kubectl...
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      - kubectl version --client
+      - aws eks update-kubeconfig --name cluster
+      - kubectl apply -f k8s/deployment.yaml --validate=false
+
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 593331310640.dkr.ecr.us-east-1.amazonaws.com
+      - echo Environment variables loaded...
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build --build-arg REACT_APP_MOVIE_API_URL=$REACT_APP_MOVIE_API_URL -t frontend .
+      - echo Tagging the Docker image...
+      - docker tag frontend:latest $ECR_REPOSITORY_URI:latest
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image to ECR...
+      - docker push $ECR_REPOSITORY_URI:latest
+      - echo Docker image pushed successfully.
+      - kubectl apply -f k8s/deployment.yaml --validate=false
+      - kubectl apply -f k8s/service.yaml --validate=false
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes
+
+cache:
+  paths:
+    - '/root/.cache/pip/**'
+    - '/root/.npm/**'
