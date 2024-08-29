@@ -5,13 +5,10 @@ env:
 phases:
   build:
     steps:
-      - name: "Get Build Region"
-        run: |
-          echo "AWS_REGION=$AWS_REGION" >> $GITHUB_ENV        
       - name: "Configure AWS credentials"
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: us-east-1
       - name: "Install Kubectl"
         uses: alexellis/arkade-get@23907b6f8cec5667c9a4ef724adea073d677e221
         with:
