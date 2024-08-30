@@ -81,12 +81,15 @@ jobs:
       # Set up kubectl.
       - run: |
           aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.AWS_CLUSTER_NAME }}
-
+      #debug 
+      - run: ls -al k8s
+      
       # Deploy the Docker image to the Kubernetes cluster.
       - run: |
           kubectl set image deployment/frontend frontend=${{ env.ECR_REPOSITORY_URI }}:${{ github.sha }}
-          kubectl apply -f k8s/deployment.yaml --validate=false
-          kubectl apply -f k8s/service.yaml --validate=false
+          kubectl apply -f deployment.yaml --validate=false
+          kubectl apply -f service.yaml --validate=false
+        working-directory: ./k8s
 
 env:
   AWS_REGION: "us-east-1"
