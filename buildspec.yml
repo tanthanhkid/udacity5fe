@@ -13,7 +13,7 @@ phases:
         uses: alexellis/arkade-get@23907b6f8cec5667c9a4ef724adea073d677e221
         with:
           kubectl: latest
-      - name: "Configure Kubectl"
+      - name: "Configure Kubectl."
         run: aws eks update-kubeconfig --name cluster
       - name: "Configure Kubectl"
         run: kubectl get all
