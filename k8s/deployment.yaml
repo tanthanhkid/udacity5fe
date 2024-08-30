@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontend-deployment
   labels:
-    app: frontend
+    app: frontend-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: frontend-deployment
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontend-deployment
     spec:
       containers:
-        - name: frontend
-          image: 593331310640.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
+        - name: frontend-deployment
+          image: ${{ env.ECR_REPOSITORY_URI }}:${{ github.sha }}
           ports:
             - containerPort: 3000
