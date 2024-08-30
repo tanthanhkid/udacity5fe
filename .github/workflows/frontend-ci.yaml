@@ -1,18 +1,76 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+name: frontend-ci
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'starter/frontend/**'
+  workflow_dispatch:
+
 jobs:
-  Explore-GitHub-Actions:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
+    steps:
+      # Check out the code from the repository.
+      - uses: actions/checkout@v3
+
+      # Set up a Node.js environment using the specified node version.
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Install the dependencies.
+      - run: npm ci
+        working-directory: starter/frontend
+
+      # Run the linter.
+      - run: npm run lint
+        working-directory: starter/frontend
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
+    steps:
+      # Check out the code from the repository.
+      - uses: actions/checkout@v3
+
+      # Set up a Node.js environment using the specified node version.
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Install the dependencies.
+      - run: npm ci
+        working-directory: starter/frontend
+
+      # Run the tests.
+      - run: CI=true npm test
+        working-directory: starter/frontend
+
+  build:
+    needs: [lint, test]
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      # Check out the code from the repository.
+      - uses: actions/checkout@v3
+
+      # Set up a Node.js environment using the specified node version.
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      # Install the dependencies.
+      - run: npm ci
+        working-directory: starter/frontend
+
+      # Build the Docker image for production deployment.
+      - run: docker build --build-arg REACT_APP_MOVIE_API_URL=http://localhost:5000 -t frontend-app ./starter/frontend
+
+      # Send a console message at completion.
+      - run: echo "Hello ${{ github.actor }}. You pushed to ${{ github.repository }} at $(date)."
