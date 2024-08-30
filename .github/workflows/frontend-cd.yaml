@@ -81,8 +81,7 @@ jobs:
       # Set up kubectl.
       - run: |
           aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.AWS_CLUSTER_NAME }}
-      #debug 
-      - run: ls -al k8s
+
       
       # Deploy the Docker image to the Kubernetes cluster.
       - run: |
