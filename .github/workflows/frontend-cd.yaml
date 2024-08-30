@@ -84,7 +84,7 @@ jobs:
 
       # Deploy the Docker image to the Kubernetes cluster.
       - run: |
-          kubectl set image deployment/frontend-deployment frontend=${{ env.ECR_REPOSITORY_URI }}:${{ github.sha }}
+          kubectl set image deployment/frontend frontend=${{ env.ECR_REPOSITORY_URI }}:${{ github.sha }}
           kubectl apply -f k8s/deployment.yaml --validate=false
           kubectl apply -f k8s/service.yaml --validate=false
 
