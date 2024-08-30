@@ -88,7 +88,7 @@ jobs:
           kubectl set image deployment/frontend frontend=${{ env.ECR_REPOSITORY_URI }}:${{ github.sha }}
           kubectl apply -f deployment.yaml --validate=false
           kubectl apply -f service.yaml --validate=false
-        working-directory: /k8s
+        working-directory: /home/runner/work/udacity5fe/udacity5fe/k8s
 
 env:
   AWS_REGION: "us-east-1"
