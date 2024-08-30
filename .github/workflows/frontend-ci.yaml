@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'starter/frontend/**'
   workflow_dispatch:
 
 jobs:
@@ -25,11 +23,11 @@ jobs:
 
       # Install the dependencies.
       - run: npm ci
-        working-directory: starter/frontend
+        working-directory: /
 
       # Run the linter.
       - run: npm run lint
-        working-directory: starter/frontend
+        working-directory: /
 
   test:
     runs-on: ubuntu-latest
@@ -47,11 +45,11 @@ jobs:
 
       # Install the dependencies.
       - run: npm ci
-        working-directory: starter/frontend
+        working-directory: /
 
       # Run the tests.
       - run: CI=true npm test
-        working-directory: starter/frontend
+        working-directory: /
 
   build:
     needs: [lint, test]
@@ -67,10 +65,10 @@ jobs:
 
       # Install the dependencies.
       - run: npm ci
-        working-directory: starter/frontend
+        working-directory: /
 
       # Build the Docker image for production deployment.
-      - run: docker build --build-arg REACT_APP_MOVIE_API_URL=http://localhost:5000 -t frontend-app ./starter/frontend
+      - run: docker build --build-arg REACT_APP_MOVIE_API_URL=http://localhost:5000 -t frontend-app .
 
       # Send a console message at completion.
       - run: echo "Hello ${{ github.actor }}. You pushed to ${{ github.repository }} at $(date)."
