@@ -23,11 +23,9 @@ jobs:
 
       # Install the dependencies.
       - run: npm ci
-        working-directory: /
 
       # Run the linter.
       - run: npm run lint
-        working-directory: /
 
   test:
     runs-on: ubuntu-latest
@@ -45,11 +43,9 @@ jobs:
 
       # Install the dependencies.
       - run: npm ci
-        working-directory: /
 
       # Run the tests.
       - run: CI=true npm test
-        working-directory: /
 
   build:
     needs: [lint, test]
@@ -65,7 +61,6 @@ jobs:
 
       # Install the dependencies.
       - run: npm ci
-        working-directory: /
 
       # Build the Docker image for production deployment.
       - run: docker build --build-arg REACT_APP_MOVIE_API_URL=http://localhost:5000 -t frontend-app .
