@@ -71,6 +71,9 @@ jobs:
     needs: build
 
     steps:
+      # Check out the code from the repository.
+      - uses: actions/checkout@v2
+      
       # Configure AWS credentials. 
       - uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -86,9 +89,8 @@ jobs:
       # Deploy the Docker image to the Kubernetes cluster.
       - run: |
           kubectl set image deployment/frontend frontend=${{ env.ECR_REPOSITORY_URI }}:${{ github.sha }}
-          kubectl apply -f deployment.yaml --validate=false
-          kubectl apply -f service.yaml --validate=false
-        working-directory: /home/runner/work/udacity5fe/udacity5fe/k8s
+          kubectl apply -f k8s/deployment.yaml --validate=false
+          kubectl apply -f k8s/service.yaml --validate=false 
 
 env:
   AWS_REGION: "us-east-1"
