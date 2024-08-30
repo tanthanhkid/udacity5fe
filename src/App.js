@@ -7,6 +7,7 @@ export default function App() {
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   const handleMovieClick = (movie) => {
+    console.log("OK");
     setSelectedMovie(movie);
   };
 
